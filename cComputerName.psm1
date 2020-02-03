@@ -16,8 +16,9 @@ enum Ensure
         if ($this.Ensure -eq  [Ensure]::Present)
         {
             $regvalue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Virtual Machine\Guest\Parameters" -Name "VirtualMachineName" -ErrorAction SilentlyContinue
+            $newname = ($regvalue.VirtualMachineName -split ':')[0]
 
-            Rename-Computer -NewName $regvalue.VirtualMachineName -Restart
+            Rename-Computer -NewName $newname -Restart
         }
         elseif ($this.Ensure  -eq [Ensure]::Absent)
         {
@@ -31,7 +32,8 @@ enum Ensure
     {
         #HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Virtual Machine\Guest\Parameters
         $regvalue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Virtual Machine\Guest\Parameters" -Name "VirtualMachineName" -ErrorAction SilentlyContinue
-        $rootfolderset = $regvalue.VirtualMachineName -eq $env:COMPUTERNAME
+        $newname = ($regvalue.VirtualMachineName -split ':')[0]
+        $rootfolderset = $newname -eq $env:COMPUTERNAME
         if ($this.Ensure -eq  [Ensure]::Present)
         {
             return $rootfolderset
@@ -48,7 +50,8 @@ enum Ensure
     {
         #
         $regvalue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Virtual Machine\Guest\Parameters" -Name "VirtualMachineName" -ErrorAction SilentlyContinue
-        if( $regvalue.RootFolder -eq $env:COMPUTERNAME )
+        $newname = ($regvalue.VirtualMachineName -split ':')[0]
+        if( $newname -eq $env:COMPUTERNAME )
         {
             $this.Ensure = [Ensure]::Present
         }
