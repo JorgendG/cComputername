@@ -18,7 +18,8 @@ enum Ensure
             $regvalue = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Virtual Machine\Guest\Parameters" -Name "VirtualMachineName" -ErrorAction SilentlyContinue
             $newname = ($regvalue.VirtualMachineName -split ':')[0]
 
-            Rename-Computer -NewName $newname -Restart
+            Rename-Computer -NewName $newname
+            $global:DSCMachineStatus = 1
         }
         elseif ($this.Ensure  -eq [Ensure]::Absent)
         {
